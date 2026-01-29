@@ -12,8 +12,8 @@ import '../utils/token.dart';
 
 class NetworkImplementation extends NetworkRepository {
   Future<Map<String, String>> createHeaders(
-      Map<String, dynamic> incomingHeaders,
-      ) async {
+    Map<String, dynamic> incomingHeaders,
+  ) async {
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
     Map<String, String> headers = {
@@ -22,12 +22,11 @@ class NetworkImplementation extends NetworkRepository {
       'app_version': packageInfo.version,
       ...incomingHeaders.map((key, value) => MapEntry(key, value.toString())),
     };
-      headers['Content-Type'] = 'application/json';
+    headers['Content-Type'] = 'application/json';
     return headers;
   }
 
   dynamic handleResponse(http.Response response) {
-
     // if (response.statusCode == 419) {
     //   LogoutManager().logout();
     //
@@ -115,15 +114,13 @@ class NetworkImplementation extends NetworkRepository {
 
   bool isSuccessResponse(int number) => number >= 200 && number <= 299;
 
-
   @override
   Future get(
-      String route, {
-        bool isFormData = false,
-        Map<String, dynamic> incomingHeaders = const {},
-      }) async {
-    Map<String, String> headers =
-    await createHeaders(incomingHeaders);
+    String route, {
+    bool isFormData = false,
+    Map<String, dynamic> incomingHeaders = const {},
+  }) async {
+    Map<String, String> headers = await createHeaders(incomingHeaders);
 
     try {
       http.Response response = await http.get(
@@ -139,9 +136,9 @@ class NetworkImplementation extends NetworkRepository {
         message: 'Network error, Connection timed out, please try again',
         statusCode: 499,
       );
-    } catch (_) {
+    } catch (e) {
       throw CustomException(
-        message: 'Network error, Connection timed out, please try again',
+        message: '$e, please try again',
         statusCode: 499,
       );
     }
@@ -149,24 +146,22 @@ class NetworkImplementation extends NetworkRepository {
 
   @override
   Future<dynamic> post(
-      String route, {
-        required dynamic form,
-        Map<String, dynamic> incomingHeaders = const {},
-      }) async {
-    Map<String, String> headers =
-    await createHeaders(incomingHeaders);
+    String route, {
+    required dynamic form,
+    Map<String, dynamic> incomingHeaders = const {},
+  }) async {
+    Map<String, String> headers = await createHeaders(incomingHeaders);
 
     try {
-        http.Response response = await http.post(
-          Uri.parse(route),
-          body: json.encode(form),
-          headers: headers,
-        );
+      http.Response response = await http.post(
+        Uri.parse(route),
+        body: json.encode(form),
+        headers: headers,
+      );
 
-        Logger().d('Response: ${response.body}');
+      Logger().d('Response: ${response.body}');
 
-        return handleResponse(response);
-
+      return handleResponse(response);
     } on CustomException catch (_) {
       rethrow;
     } on TimeoutException catch (_) {
@@ -183,6 +178,4 @@ class NetworkImplementation extends NetworkRepository {
       );
     }
   }
-
-
 }

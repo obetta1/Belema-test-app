@@ -1,7 +1,10 @@
+import 'package:belema_test_app/core/widgets/input_field.dart';
+import 'package:belema_test_app/features/pin/pint_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../core/routes/app_routes.dart';
 import '../../core/utils/app_colors.dart';
 import '../../core/widgets/password_input_field.dart';
 import '../../core/widgets/primary_button.dart';
@@ -18,6 +21,13 @@ class _SetPinScreenState extends ConsumerState<SetPinScreen> {
   final _newPinController = TextEditingController();
   final _confirmPinController = TextEditingController();
   bool _loading = false;
+
+  @override
+  void dispose() {
+    _newPinController.dispose();
+    _confirmPinController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +70,7 @@ class _SetPinScreenState extends ConsumerState<SetPinScreen> {
                 SizedBox(height: 8.0.h),
                 Center(
                   child: Text(
-                    'Reset your default PIN',
+                    'Set your transaction PIN',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontWeight: FontWeight.w400,
@@ -70,11 +80,12 @@ class _SetPinScreenState extends ConsumerState<SetPinScreen> {
                   ),
                 ),
                 SizedBox(height: 24.0.h),
-                PasswordInputField(
+                InputField(
                   controller: _newPinController,
                   hint: "New PIN",
                   label: "New PIN",
-
+                  maxLength: 4,
+                  textInputType: TextInputType.number,
                   validator: (String? value) {
                     if (value!.length != 4) {
                       return "PIN must be 4 digits";
@@ -83,11 +94,12 @@ class _SetPinScreenState extends ConsumerState<SetPinScreen> {
                   }, // Ensure this validator exists
                 ),
                 SizedBox(height: 24.0.h),
-                PasswordInputField(
+                InputField(
                   controller: _confirmPinController,
-                  isConfirmPassword: true,
                   hint: 'Confirm New PIN',
                   label: 'Confirm New PIN',
+                  maxLength: 4,
+                  textInputType: TextInputType.number,
                   validator: (String? value) {
                     if (_newPinController.text != _confirmPinController.text) {
                       return "PIN do not match";
@@ -98,13 +110,80 @@ class _SetPinScreenState extends ConsumerState<SetPinScreen> {
                 SizedBox(height: 50.0.h),
                 PrimaryButton(
                   isLoading: _loading,
-                  onPressed: (){},
+                  onPressed: _handleSetPin,
                   buttonText: 'Reset',
                 ),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  /// Handle PIN setting process
+  Future<void> _handleSetPin() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    setState(() => _loading = true);
+
+    try {
+      final pinService = ref.read(pinServiceProvider);
+      final result = await pinService.setTransactionPin(
+        pin: _newPinController.text.trim(),
+        onError: (message) {
+          _showErrorSnackBar(message);
+        },
+      );
+
+      if (!mounted) return;
+
+      if (result.success) {
+        _showSuccessSnackBar('PIN set successfully');
+        // Navigate to transfer screen after successful PIN setup
+        Future.delayed(const Duration(seconds: 1), () {
+          if (mounted) {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              AppRoutes.transferScreen,
+              (route) => false,
+            );
+          }
+        });
+      } else {
+        _showErrorSnackBar(result.message);
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorSnackBar('An unexpected error occurred');
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _loading = false);
+      }
+    }
+  }
+
+  /// Show error message as snackbar
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
+  /// Show success message as snackbar
+  void _showSuccessSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 3),
       ),
     );
   }

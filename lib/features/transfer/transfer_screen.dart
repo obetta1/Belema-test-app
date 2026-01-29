@@ -1,4 +1,7 @@
 import 'package:belema_test_app/core/models/bank_model.dart';
+import 'package:belema_test_app/core/utils/nigerian_banks.dart';
+import 'package:belema_test_app/core/widgets/custome_snackbar.dart';
+import 'package:belema_test_app/features/transfer/transfer_service.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,7 +15,7 @@ import '../../core/widgets/input_field.dart';
 import '../../core/widgets/password_input_field.dart';
 import '../../core/widgets/primary_button.dart';
 
-class TransferScreen extends ConsumerStatefulWidget{
+class TransferScreen extends ConsumerStatefulWidget {
   const TransferScreen({super.key});
 
   @override
@@ -22,33 +25,138 @@ class TransferScreen extends ConsumerStatefulWidget{
 class _TransferScreenState extends ConsumerState<TransferScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _bankController = TextEditingController();
-  final TextEditingController _accountNumberController = TextEditingController();
+  final TextEditingController _accountNumberController =
+      TextEditingController();
   final TextEditingController _accountNameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _newPinController = TextEditingController();
   List<BanksModel> bankList = [];
   BanksModel? selectedBank;
   bool _loadingAccountDetails = false;
+  bool _submittingTransfer = false;
 
+  @override
+  void initState() {
+    super.initState();
+    bankList = nigerianBanks;
+  }
+
+  @override
+  void dispose() {
+    _bankController.dispose();
+    _accountNumberController.dispose();
+    _accountNameController.dispose();
+    _amountController.dispose();
+    _newPinController.dispose();
+    super.dispose();
+  }
+
+  /// Validate account number and fetch account details
   void _validateAccountNumber() async {
+    if (selectedBank == null) {
+      MessageAlert.error(
+          context: context, message: 'Please select a bank first');
+      return;
+    }
+
+    if (_accountNumberController.text.length != 10) {
+      return;
+    }
+
     setState(() {
       _loadingAccountDetails = true;
+      _accountNameController.clear();
     });
 
-    // Simulate an API call to validate the account number
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      await Future.delayed(Duration(seconds: 2)); // Simulate network delay
+      if (!mounted) return;
+      setState(() {
+        _accountNameController.text = 'John Doe'; // Simulated account name
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _loadingAccountDetails = false;
+        });
+      }
+    }
+  }
 
-    // For demonstration, I assume the account number is valid and set a dummy account name
+  /// Handle transfer submission
+  Future<void> _handleTransferSubmit() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    setState(() => _submittingTransfer = true);
+
+    try {
+      final transferService = ref.read(transferServiceProvider);
+      final amount = double.parse(_amountController.text.replaceAll(',', ''));
+
+      final result = await transferService.submitTransfer(
+        toAccount: '1000',
+        amount: amount,
+        pin: _newPinController.text,
+        onError: (message) {
+          _showErrorSnackBar(message);
+        },
+      );
+
+      if (!mounted) return;
+
+      if (result != null) {
+        MessageAlert.success(
+          context: context,
+          message: 'Transfer successful - ID: ${result.transactionId}',
+        );
+        _clearForm();
+        // Navigate back after successful transfer
+        Future.delayed(const Duration(seconds: 2), () {
+          if (mounted) {
+            Navigator.pop(context);
+          }
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorSnackBar('An unexpected error occurred');
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _submittingTransfer = false);
+      }
+    }
+  }
+
+  /// Clear form fields
+  void _clearForm() {
+    _bankController.clear();
+    _accountNumberController.clear();
+    _accountNameController.clear();
+    _amountController.clear();
+    _newPinController.clear();
     setState(() {
-      _accountNameController.text = 'John Doe';
-      _loadingAccountDetails = false;
+      selectedBank = null;
     });
+  }
+
+  /// Show error message as snackbar
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:  AppBar(title: Text('Transfer')),
+      appBar: AppBar(title: const Text('Transfer')),
       body: _buildBody(),
     );
   }
@@ -62,13 +170,15 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
           DropdownSearchField(
             controller: _bankController,
             down: true,
-            dropdownData:bankList.map((e) => e.name!).toList(),
+            dropdownData: bankList.map((e) => e.name!).toList(),
             hint: 'Select Bank',
             label: 'Bank',
             onSelected: (value) {
               selectedBank = bankList.firstWhere(
-                    (element) => element.name == value,
+                (element) => element.name == value,
               );
+              // Clear account details when bank changes
+              _accountNameController.clear();
             },
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -82,25 +192,31 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
             label: 'Account Number',
             controller: _accountNumberController,
             hint: 'Account Number',
+            maxLength: 10,
             autoValidate: AutovalidateMode.onUserInteraction,
             textInputType: TextInputType.number,
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter account number';
               }
+              if (value.length != 10) {
+                return 'Account number must be 10 digits';
+              }
               return null;
             },
             suffixIcon: _loadingAccountDetails
                 ? Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: LoadingAnimationWidget.inkDrop(
-                color: AppColors.primaryColor,
-                size: 20.0.w,
-              ),
-            )
+                    padding: const EdgeInsets.all(16.0),
+                    child: LoadingAnimationWidget.inkDrop(
+                      color: AppColors.primaryColor,
+                      size: 20.0.w,
+                    ),
+                  )
                 : null,
             onChanged: (String? value) {
-              if (value!.length == 10) _validateAccountNumber();
+              if (value!.length == 10) {
+                _validateAccountNumber();
+              }
             },
           ),
           SizedBox(height: 24.0.h),
@@ -133,7 +249,7 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
                 return 'Amount must be greater than ₦100';
               }
               if (double.parse(value.replaceAll(',', '')) >
-                  ref.watch(walletBalance)) {
+                  ref.watch(accountDetail).balance) {
                 return 'Insufficient Account Balance';
               }
 
@@ -160,21 +276,23 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
             ),
           ),
           SizedBox(height: 24.0.h),
-          PasswordInputField(
+          InputField(
             controller: _newPinController,
             hint: "Enter Your PIN",
             label: "Transaction PIN",
+            maxLength: 4,
             validator: (String? value) {
               if (value!.length != 4) {
                 return "PIN must be 4 digits";
               }
               return null;
-            }, // Ensure this validator exists
+            },
           ),
           SizedBox(height: 30.0.h),
           PrimaryButton(
-            onPressed: (){},
+            onPressed: _handleTransferSubmit,
             buttonText: 'Next',
+            isLoading: _submittingTransfer,
           ),
         ],
       ),

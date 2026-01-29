@@ -207,7 +207,7 @@ class _PasswordInputFieldState extends State<PasswordInputField> {
             Icon(_containsUpperCase ? Icons.check : Icons.close,
                 color: _containsUpperCase
                     ? const Color(0xff44AC21)
-                    : AppColors.primaryColor),
+                    : AppColors.red),
             SizedBox(width: 10.0.w),
             FittedBox(
               child: Text(
@@ -227,7 +227,7 @@ class _PasswordInputFieldState extends State<PasswordInputField> {
             Icon(_lengthOf8 ? Icons.check : Icons.close,
                 color: _lengthOf8
                     ? const Color(0xff44AC21)
-                    : AppColors.primaryColor),
+                    : AppColors.red),
             SizedBox(width: 10.0.w),
             FittedBox(
               child: Text(
@@ -247,7 +247,7 @@ class _PasswordInputFieldState extends State<PasswordInputField> {
             Icon(_containsLowerCase ? Icons.check : Icons.close,
                 color: _containsLowerCase
                     ? const Color(0xff44AC21)
-                    : AppColors.primaryColor),
+                    : AppColors.red),
             SizedBox(width: 10.0.w),
             FittedBox(
               child: Text(
@@ -267,7 +267,7 @@ class _PasswordInputFieldState extends State<PasswordInputField> {
             Icon(_containsNumber ? Icons.check : Icons.close,
                 color: _containsNumber
                     ? const Color(0xff44AC21)
-                    : AppColors.primaryColor),
+                    : AppColors.red),
             SizedBox(width: 10.0.w),
             FittedBox(
               child: Text(
@@ -287,7 +287,7 @@ class _PasswordInputFieldState extends State<PasswordInputField> {
             Icon(_containsSpecialCharacter ? Icons.check : Icons.close,
                 color: _containsSpecialCharacter
                     ? const Color(0xff44AC21)
-                    : AppColors.primaryColor),
+                    : AppColors.red),
             SizedBox(width: 10.0.w),
             FittedBox(
               child: Text(
