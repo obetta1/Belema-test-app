@@ -1,6 +1,6 @@
 # Belema Test App
 
-A Flutter-based mobile fintech application that provides secure banking and financial services including user authentication, fund transfers, transaction PIN management, and transaction history tracking.
+A Flutter-based mobile fintech application demo for banking and financial services including user authentication, fund transfers, transaction PIN management, and transaction history tracking.
 
 ## Features
 
@@ -10,16 +10,13 @@ A Flutter-based mobile fintech application that provides secure banking and fina
 - Conditional navigation based on PIN setup status
 
 ### 💰 Fund Transfers
-- Inter-bank money transfers across Nigerian banks
-- Real-time account validation and name verification
+- Inter-bank money transfers simulation
 - Transaction PIN authentication
 - Balance validation before transfers
-- Support for 25+ Nigerian banks
 
 ### 🔒 Transaction PIN Management
-- Secure PIN setup for transaction authorization
+- PIN setup for transaction authorization
 - PIN validation and confirmation
-- Encrypted PIN storage and transmission
 
 ### 📊 Dashboard & Transactions
 - Real-time wallet balance display
@@ -75,7 +72,7 @@ The app integrates with the following backend endpoints:
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone  https://github.com/obetta1/Belema-test-app.git
    cd belema_test_app
    ```
 
@@ -96,21 +93,6 @@ The app integrates with the following backend endpoints:
    flutter run -d chrome
    ```
 
-### Build Commands
-
-```bash
-# Clean and rebuild
-flutter clean && flutter pub get
-
-# Analyze code
-flutter analyze
-
-# Format code
-dart format lib/
-
-# Run tests (when available)
-flutter test
-```
 
 ## Configuration
 
@@ -119,39 +101,4 @@ flutter test
 - **Design Size**: 375x800 (iPhone X dimensions) for responsive scaling
 - **Text Scaling**: Clamped to 1.0 to prevent accessibility scaling
 
-### Security Features
-- JWT token authentication with automatic refresh
-- Secure storage for sensitive data
-- PIN-based transaction authorization
-- Encrypted API communications
 
-## Development Guidelines
-
-### Code Style
-- Follow Flutter linting rules
-- Use camelCase for files and variables
-- Implement proper error handling with try-catch blocks
-- Use Riverpod for state management
-- Follow feature-driven modular architecture
-
-### Testing
-- Unit tests for business logic
-- Widget tests for UI components
-- Integration tests for complete flows
-- Mock API responses for testing
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Support
-
-For support and questions, please contact the development team or create an issue in the repository.

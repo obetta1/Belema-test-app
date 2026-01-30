@@ -124,6 +124,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (!mounted) return;
 
       if (result['success']) {
+        MessageAlert.success(context: context, message: 'Login successful');
+        await Future.delayed(Duration(seconds: 2));
         final hasPin = result['hasPin'] as bool;
         if (hasPin) {
           // User has PIN set - navigate to dashboard

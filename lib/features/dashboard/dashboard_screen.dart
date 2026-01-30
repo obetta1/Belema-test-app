@@ -88,7 +88,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               _buildBadge("Tier 1"),
               const SizedBox(width: 8),
               _buildBadge(
-                ref.read(accountDetail).accountNumber,
+                ref.watch(accountDetail).accountNumber,
                 icon: Icons.copy,
               ),
             ],
@@ -96,7 +96,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           const SizedBox(height: 20),
           Text(
               NumberFormat.currency(decimalDigits: 2, symbol: '₦')
-                  .format(ref.read(accountDetail).balance),
+                  .format(ref.watch(accountDetail).balance),
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 32,

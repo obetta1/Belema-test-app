@@ -14,6 +14,7 @@ import '../../core/widgets/dropdown_search_field.dart';
 import '../../core/widgets/input_field.dart';
 import '../../core/widgets/password_input_field.dart';
 import '../../core/widgets/primary_button.dart';
+import '../dashboard/dashboard_service.dart';
 
 class TransferScreen extends ConsumerStatefulWidget {
   const TransferScreen({super.key});
@@ -178,6 +179,7 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
             hint: "Enter Your PIN",
             label: "Transaction PIN",
             maxLength: 4,
+            textInputType: TextInputType.number,
             validator: (String? value) {
               if (value!.length != 4) {
                 return "PIN must be 4 digits";
@@ -258,6 +260,9 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
           context: context,
           message: 'Transfer successful - ID: ${result.transactionId}',
         );
+        ref
+            .read(dashboardServiceProvider)
+            .getAccountDetails(ref: ref, onError: (message) {});
         _clearForm();
         Future.delayed(const Duration(seconds: 2), () {
           if (mounted) {
