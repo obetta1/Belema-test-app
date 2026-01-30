@@ -35,8 +35,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-      ),
+      appBar: AppBar(),
       body: _buildBody(),
     );
   }
@@ -104,7 +103,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 
-  /// Handle login process
   Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -126,6 +124,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (!mounted) return;
 
       if (result['success']) {
+        MessageAlert.success(context: context, message: 'Login successful');
+        await Future.delayed(Duration(seconds: 2));
         final hasPin = result['hasPin'] as bool;
         if (hasPin) {
           // User has PIN set - navigate to dashboard
@@ -141,7 +141,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
     } catch (e) {
       if (mounted) {
-        MessageAlert.error(context: context, message: 'An unexpected error occurred');
+        MessageAlert.error(
+            context: context, message: 'An unexpected error occurred');
       }
     } finally {
       if (mounted) {
@@ -149,7 +150,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
     }
   }
-  
+
   /// this is used to show dialog to prompt setting transaction PIN
   void _showSetPinDialog() {
     showDialog(

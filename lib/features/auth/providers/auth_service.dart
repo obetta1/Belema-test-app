@@ -12,8 +12,6 @@ final authProvider = Provider<AuthServiceProvider>((ref) {
   return AuthServiceProvider();
 });
 
-
-
 class AuthServiceProvider {
   NetworkRepository networkRepository = NetworkImplementation();
 

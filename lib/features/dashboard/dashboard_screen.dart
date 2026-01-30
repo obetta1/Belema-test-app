@@ -16,16 +16,15 @@ class DashboardScreen extends ConsumerStatefulWidget {
 }
 
 class _DashboardScreenState extends ConsumerState<DashboardScreen> {
-
   @override
   void initState() {
     super.initState();
-    ref.read(dashboardServiceProvider).getTransactions(
-      ref: ref,
-      onError: (message) {});
-    ref.read(dashboardServiceProvider).getAccountDetails(
-      ref: ref,
-      onError: (message) {});
+    ref
+        .read(dashboardServiceProvider)
+        .getTransactions(ref: ref, onError: (message) {});
+    ref
+        .read(dashboardServiceProvider)
+        .getAccountDetails(ref: ref, onError: (message) {});
   }
 
   @override
@@ -70,8 +69,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
-                      Text("Hello,",
-                          style: TextStyle(color: Colors.white70)),
+                      Text("Hello,", style: TextStyle(color: Colors.white70)),
                       Text("Oluwatobi",
                           style: TextStyle(
                               color: Colors.white,
@@ -89,13 +87,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             children: [
               _buildBadge("Tier 1"),
               const SizedBox(width: 8),
-              _buildBadge(ref.read(accountDetail).accountNumber,
-                  icon: Icons.copy,),
+              _buildBadge(
+                ref.watch(accountDetail).accountNumber,
+                icon: Icons.copy,
+              ),
             ],
           ),
           const SizedBox(height: 20),
-
-           Text(NumberFormat.currency(decimalDigits: 2, symbol: '₦').format(ref.read(accountDetail).balance),
+          Text(
+              NumberFormat.currency(decimalDigits: 2, symbol: '₦')
+                  .format(ref.watch(accountDetail).balance),
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 32,
@@ -139,8 +140,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-             Text("Shortcuts",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppColors.white)),
+            Text("Shortcuts",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: AppColors.white)),
             const SizedBox(height: 15),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -168,30 +172,30 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                  "Transactions",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black87)
-              ),
+              const Text("Transactions",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: Colors.black87)),
               TextButton(
                   onPressed: () {},
-                  child: const Text("See more >", style: TextStyle(color: Colors.grey))
-              ),
+                  child: const Text("See more >",
+                      style: TextStyle(color: Colors.grey))),
             ],
           ),
-          // This builder should use the data from your Riverpod Provider
           Expanded(
             child: ListView.separated(
               shrinkWrap: true,
               itemCount: transactionData.length,
-              separatorBuilder: (context, index) => const Divider(height: 1, color: Color(0xFFF0F0F0)),
+              separatorBuilder: (context, index) =>
+                  const Divider(height: 1, color: Color(0xFFF0F0F0)),
               itemBuilder: (context, index) {
                 final item = transactionData[index];
                 return _buildTransactionItem(
                     title: item.toAccount,
                     time: item.timeAgo,
                     amount: item.amount,
-                    isCredit: index%2 ==0
-                );
+                    isCredit: index % 2 == 0);
               },
             ),
           ),
@@ -210,7 +214,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Row(
         children: [
-          // The grey circular icon container from the screenshot
           Container(
             height: 48,
             width: 48,
@@ -221,19 +224,21 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             child: const Icon(Icons.send_rounded, size: 20, color: Colors.grey),
           ),
           const SizedBox(width: 16),
-          // Title and Subtitle
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black87),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                      color: Colors.black87),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const Text(
-                  "Transfer", // Static label per screenshot
+                  "Transfer",
                   style: TextStyle(color: Colors.grey, fontSize: 13),
                 ),
               ],
@@ -246,7 +251,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               Text(
                 "${isCredit ? '+' : '-'} ₦ $amount",
                 style: TextStyle(
-                  color: isCredit ? const Color(0xFF0066FF) : Colors.black, // Blue for credit per screenshot
+                  color: isCredit
+                      ? const Color(0xFF0066FF)
+                      : Colors.black, // Blue for credit per screenshot
                   fontWeight: FontWeight.bold,
                   fontSize: 15,
                 ),
@@ -262,9 +269,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       ),
     );
   }
+
   // Helper widgets for repeated elements
-  Widget _buildBadge(String text,
-      {IconData? icon,}) {
+  Widget _buildBadge(
+    String text, {
+    IconData? icon,
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
@@ -273,8 +283,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       ),
       child: Row(
         children: [
-          Text(text,
-              style: const TextStyle(color: Colors.white, fontSize: 12)),
+          Text(text, style: const TextStyle(color: Colors.white, fontSize: 12)),
           if (icon != null) ...[
             const SizedBox(width: 4),
             Icon(icon, size: 12, color: Colors.white)
@@ -302,8 +311,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(label,
-                  style: TextStyle(
-                      color: textCol, fontWeight: FontWeight.bold)),
+                  style:
+                      TextStyle(color: textCol, fontWeight: FontWeight.bold)),
               const SizedBox(width: 8),
               Icon(icon, color: textCol, size: 18),
             ],
@@ -322,8 +331,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
-          BoxShadow(
-              color: Colors.black.withOpacity(0.05), blurRadius: 10)
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)
         ],
       ),
       child: Column(
@@ -331,38 +339,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         children: [
           Icon(icon, color: color),
           const SizedBox(height: 20),
-          Text(title,
-              style: const TextStyle(fontWeight: FontWeight.w500)),
+          Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
         ],
       ),
     );
   }
-
-  // Widget _buildTransactionItem(String title, String time, String amount,
-  //     {required bool isCredit}) {
-  //   return ListTile(
-  //     contentPadding: EdgeInsets.zero,
-  //     leading: const CircleAvatar(
-  //         backgroundColor: Color(0xFFF5F5F5),
-  //         child: Icon(Icons.send, size: 16, color: Colors.grey)),
-  //     title: Text(title,
-  //         style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-  //     subtitle: const Text("Transfer",
-  //         style: TextStyle(fontSize: 12)),
-  //     trailing: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.end,
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: [
-  //         Text(amount,
-  //             style: TextStyle(
-  //                 color: isCredit ? Colors.blue : Colors.black,
-  //                 fontWeight: FontWeight.bold)),
-  //         Text(time,
-  //             style: const TextStyle(fontSize: 10, color: Colors.grey)),
-  //       ],
-  //     ),
-  //   );
-  // }
 
   Widget _buildBottomNav() {
     return BottomNavigationBar(
@@ -375,12 +356,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             icon: Icon(Icons.grid_view), label: 'Dashboard'),
         BottomNavigationBarItem(
             icon: Icon(Icons.swap_horiz), label: 'Payments'),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.savings), label: 'Saving'),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.wallet), label: 'Wallet'),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.money), label: 'Loans'),
+        BottomNavigationBarItem(icon: Icon(Icons.savings), label: 'Saving'),
+        BottomNavigationBarItem(icon: Icon(Icons.wallet), label: 'Wallet'),
+        BottomNavigationBarItem(icon: Icon(Icons.money), label: 'Loans'),
       ],
     );
   }

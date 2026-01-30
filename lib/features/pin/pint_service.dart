@@ -13,7 +13,6 @@ class PinServiceProvider {
   NetworkRepository networkRepository = NetworkImplementation();
 
   /// Set transaction PIN
-  /// Returns SetPinResponse with success status and message
   Future<SetPinResponse> setTransactionPin({
     required String pin,
     required void Function(String message) onError,
@@ -25,9 +24,7 @@ class PinServiceProvider {
           'pin': pin,
         },
       );
-
       final setPinResponse = SetPinResponse.fromJson(response);
-      Logger().d('PIN set successfully');
       return setPinResponse;
     } catch (e, t) {
       Logger().e('Set PIN failed: $e', stackTrace: t);

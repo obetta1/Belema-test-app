@@ -12,12 +12,9 @@ final dashboardServiceProvider = Provider<DashboardServiceProvider>((ref) {
   return DashboardServiceProvider();
 });
 
-
 class DashboardServiceProvider {
   NetworkRepository networkRepository = NetworkImplementation();
 
-  /// Fetch transactions for the user
-  /// Returns list of Transaction objects
   Future<List<Transaction>> getTransactions({
     required WidgetRef ref,
     required void Function(String message) onError,

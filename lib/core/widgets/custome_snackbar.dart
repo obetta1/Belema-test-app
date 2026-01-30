@@ -116,6 +116,7 @@ class MessageAlert {
                   padding: const EdgeInsets.all(20.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
+                      color: AppColors.splashBGColor
                   ),
                   child: Row(
                     children: [
