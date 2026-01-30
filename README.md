@@ -51,15 +51,6 @@ lib/
     └── transfer/           # Money transfer functionality
 ```
 
-## API Endpoints
-
-The app integrates with the following backend endpoints:
-- `POST /login` - User authentication
-- `GET /get-account-details` - Account validation
-- `POST /transfer` - Money transfer processing
-- `POST /set-transaction-pin` - PIN setup
-- `GET /get-transactions` - Transaction history
-
 ## Getting Started
 
 ### Prerequisites
@@ -94,11 +85,6 @@ The app integrates with the following backend endpoints:
    ```
 
 
-## Configuration
 
-### Environment Setup
-- **Base URL**: Configured in `lib/core/utils/constants.dart`
-- **Design Size**: 375x800 (iPhone X dimensions) for responsive scaling
-- **Text Scaling**: Clamped to 1.0 to prevent accessibility scaling
 
 
