@@ -51,108 +51,6 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
     super.dispose();
   }
 
-  /// Validate account number and fetch account details
-  void _validateAccountNumber() async {
-    if (selectedBank == null) {
-      MessageAlert.error(
-          context: context, message: 'Please select a bank first');
-      return;
-    }
-
-    if (_accountNumberController.text.length != 10) {
-      return;
-    }
-
-    setState(() {
-      _loadingAccountDetails = true;
-      _accountNameController.clear();
-    });
-
-    try {
-      await Future.delayed(Duration(seconds: 2)); // Simulate network delay
-      if (!mounted) return;
-      setState(() {
-        _accountNameController.text = 'John Doe'; // Simulated account name
-      });
-    } finally {
-      if (mounted) {
-        setState(() {
-          _loadingAccountDetails = false;
-        });
-      }
-    }
-  }
-
-  /// Handle transfer submission
-  Future<void> _handleTransferSubmit() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
-    setState(() => _submittingTransfer = true);
-
-    try {
-      final transferService = ref.read(transferServiceProvider);
-      final amount = double.parse(_amountController.text.replaceAll(',', ''));
-
-      final result = await transferService.submitTransfer(
-        toAccount: '1000',
-        amount: amount,
-        pin: _newPinController.text,
-        onError: (message) {
-          _showErrorSnackBar(message);
-        },
-      );
-
-      if (!mounted) return;
-
-      if (result != null) {
-        MessageAlert.success(
-          context: context,
-          message: 'Transfer successful - ID: ${result.transactionId}',
-        );
-        _clearForm();
-        // Navigate back after successful transfer
-        Future.delayed(const Duration(seconds: 2), () {
-          if (mounted) {
-            Navigator.pop(context);
-          }
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        _showErrorSnackBar('An unexpected error occurred');
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _submittingTransfer = false);
-      }
-    }
-  }
-
-  /// Clear form fields
-  void _clearForm() {
-    _bankController.clear();
-    _accountNumberController.clear();
-    _accountNameController.clear();
-    _amountController.clear();
-    _newPinController.clear();
-    setState(() {
-      selectedBank = null;
-    });
-  }
-
-  /// Show error message as snackbar
-  void _showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-        duration: const Duration(seconds: 3),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -177,7 +75,6 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
               selectedBank = bankList.firstWhere(
                 (element) => element.name == value,
               );
-              // Clear account details when bank changes
               _accountNameController.clear();
             },
             validator: (value) {
@@ -297,5 +194,98 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
         ],
       ),
     );
+  }
+
+  /// Validate account number and fetch account details
+  /// this is a simulated function for demonstration purposes since there is no endpoint for this
+  void _validateAccountNumber() async {
+    if (selectedBank == null) {
+      MessageAlert.error(
+          context: context, message: 'Please select a bank first');
+      return;
+    }
+
+    if (_accountNumberController.text.length != 10) {
+      return;
+    }
+
+    setState(() {
+      _loadingAccountDetails = true;
+      _accountNameController.clear();
+    });
+
+    try {
+      await Future.delayed(Duration(seconds: 2)); // Simulate network delay
+      if (!mounted) return;
+      setState(() {
+        _accountNameController.text = 'John Doe'; // Simulated account name
+      });
+    } finally {
+      if (mounted) {
+        setState(() {
+          _loadingAccountDetails = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _handleTransferSubmit() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    setState(() => _submittingTransfer = true);
+
+    try {
+      final transferService = ref.read(transferServiceProvider);
+      final amount = double.parse(_amountController.text.replaceAll(',', ''));
+
+      final result = await transferService.submitTransfer(
+        toAccount: '1000',
+
+        ///i don't what is to be here so i used a dummy value
+        amount: amount,
+        pin: _newPinController.text,
+        onError: (message) {
+          MessageAlert.error(context: context, message: message);
+        },
+      );
+
+      if (!mounted) return;
+
+      if (result != null) {
+        MessageAlert.success(
+          context: context,
+          message: 'Transfer successful - ID: ${result.transactionId}',
+        );
+        _clearForm();
+        Future.delayed(const Duration(seconds: 2), () {
+          if (mounted) {
+            Navigator.pop(context);
+          }
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        MessageAlert.error(
+            context: context, message: 'An unexpected error occurred');
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _submittingTransfer = false);
+      }
+    }
+  }
+
+  /// Clear form fields
+  void _clearForm() {
+    _bankController.clear();
+    _accountNumberController.clear();
+    _accountNameController.clear();
+    _amountController.clear();
+    _newPinController.clear();
+    setState(() {
+      selectedBank = null;
+    });
   }
 }

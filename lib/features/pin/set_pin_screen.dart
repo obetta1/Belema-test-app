@@ -1,3 +1,4 @@
+import 'package:belema_test_app/core/widgets/custome_snackbar.dart';
 import 'package:belema_test_app/core/widgets/input_field.dart';
 import 'package:belema_test_app/features/pin/pint_service.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../core/routes/app_routes.dart';
 import '../../core/utils/app_colors.dart';
-import '../../core/widgets/password_input_field.dart';
 import '../../core/widgets/primary_button.dart';
 
 class SetPinScreen extends ConsumerStatefulWidget {
@@ -32,7 +32,9 @@ class _SetPinScreenState extends ConsumerState<SetPinScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Set Pin'),),
+      appBar: AppBar(
+        title: Text('Set Pin'),
+      ),
       body: _buildBody(),
     );
   }
@@ -121,7 +123,6 @@ class _SetPinScreenState extends ConsumerState<SetPinScreen> {
     );
   }
 
-  /// Handle PIN setting process
   Future<void> _handleSetPin() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -134,57 +135,35 @@ class _SetPinScreenState extends ConsumerState<SetPinScreen> {
       final result = await pinService.setTransactionPin(
         pin: _newPinController.text.trim(),
         onError: (message) {
-          _showErrorSnackBar(message);
+          MessageAlert.error(context: context, message: message);
         },
       );
 
       if (!mounted) return;
 
       if (result.success) {
-        _showSuccessSnackBar('PIN set successfully');
-        // Navigate to transfer screen after successful PIN setup
-        Future.delayed(const Duration(seconds: 1), () {
+        MessageAlert.success(context: context, message: 'PIN set successfully');
+        Future.delayed(const Duration(seconds: 2), () {
           if (mounted) {
             Navigator.pushNamedAndRemoveUntil(
               context,
-              AppRoutes.transferScreen,
+              AppRoutes.dashboardScreen,
               (route) => false,
             );
           }
         });
       } else {
-        _showErrorSnackBar(result.message);
+        MessageAlert.error(context: context, message: result.message);
       }
     } catch (e) {
       if (mounted) {
-        _showErrorSnackBar('An unexpected error occurred');
+        MessageAlert.error(
+            context: context, message: 'An unexpected error occurred');
       }
     } finally {
       if (mounted) {
         setState(() => _loading = false);
       }
     }
-  }
-
-  /// Show error message as snackbar
-  void _showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-        duration: const Duration(seconds: 3),
-      ),
-    );
-  }
-
-  /// Show success message as snackbar
-  void _showSuccessSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.green,
-        duration: const Duration(seconds: 3),
-      ),
-    );
   }
 }

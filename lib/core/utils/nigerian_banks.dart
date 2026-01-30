@@ -1,0 +1,30 @@
+import 'package:belema_test_app/core/models/bank_model.dart';
+
+/// List of Nigerian banks with their names and codes
+final List<BanksModel> nigerianBanks = [
+  BanksModel(name: 'Access Bank', code: '044', cbn: '044'),
+  BanksModel(name: 'Guaranty Trust Bank (GTB)', code: '058', cbn: '058'),
+  BanksModel(name: 'First Bank of Nigeria', code: '011', cbn: '011'),
+  BanksModel(name: 'Diamond Bank', code: '063', cbn: '063'),
+  BanksModel(name: 'Zenith Bank', code: '057', cbn: '057'),
+  BanksModel(name: 'United Bank for Africa (UBA)', code: '033', cbn: '033'),
+  BanksModel(name: 'Standard Chartered Bank', code: '068', cbn: '068'),
+  BanksModel(name: 'HSBC Bank PLC', code: '050', cbn: '050'),
+  BanksModel(name: 'Stanbic IBTC Bank', code: '039', cbn: '039'),
+  BanksModel(name: 'Ecobank Nigeria', code: '050', cbn: '050'),
+  BanksModel(name: 'Citibank Nigeria', code: '051', cbn: '051'),
+  BanksModel(name: 'Fidelity Bank', code: '070', cbn: '070'),
+  BanksModel(name: 'FCMB Group', code: '060', cbn: '060'),
+  BanksModel(name: 'Wema Bank', code: '035', cbn: '035'),
+  BanksModel(name: 'Sterling Bank', code: '100', cbn: '100'),
+  BanksModel(name: 'Union Bank of Nigeria', code: '032', cbn: '032'),
+  BanksModel(name: 'Unity Bank', code: '215', cbn: '215'),
+  BanksModel(name: 'Polaris Bank', code: '076', cbn: '076'),
+  BanksModel(name: 'Providus Bank', code: '101', cbn: '101'),
+  BanksModel(name: 'Titan Bank', code: '102', cbn: '102'),
+  BanksModel(name: 'Keystone Bank', code: '082', cbn: '082'),
+  BanksModel(name: 'JAIZ Bank', code: '301', cbn: '301'),
+  BanksModel(name: 'VFD Microfinance Bank', code: '566', cbn: '566'),
+  BanksModel(name: 'GT Bank (GTMobile)', code: '058', cbn: '058'),
+  BanksModel(name: 'Kuda Bank', code: '090267', cbn: '090267'),
+];
