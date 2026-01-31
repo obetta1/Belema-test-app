@@ -1,20 +1,37 @@
 import 'package:belema_test_app/core/api/newtwork_repository.dart';
 import 'package:belema_test_app/core/api/ntwork_repository_imp.dart';
 import 'package:belema_test_app/core/utils/constants.dart';
+import 'package:belema_test_app/core/utils/device_binding_service.dart';
 import 'package:belema_test_app/core/utils/token.dart';
 import 'package:belema_test_app/core/utils/storage_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
-import '../../../core/models/login_response.dart';
-
 final authProvider = Provider<AuthServiceProvider>((ref) {
   return AuthServiceProvider();
 });
 
+class LoginResponse {
+  final String accessToken;
+  final bool hasPin;
+
+  LoginResponse({
+    required this.accessToken,
+    required this.hasPin,
+  });
+
+  factory LoginResponse.fromJson(Map<String, dynamic> json) {
+    return LoginResponse(
+      accessToken: json['accessToken'] ?? '',
+      hasPin: json['hasPin'] ?? false,
+    );
+  }
+}
+
 class AuthServiceProvider {
   NetworkRepository networkRepository = NetworkImplementation();
 
+  /// Login with credentials and handle response
   /// Returns a map with 'success' and 'hasPin' status
   Future<Map<String, dynamic>> login({
     required String username,
@@ -31,9 +48,17 @@ class AuthServiceProvider {
         },
       );
 
+      // Parse response
       final loginResponse = LoginResponse.fromJson(response);
+
+      // Save token securely
       await StorageManager.saveToken(loginResponse.accessToken);
+
+      // Update the static Token class for header usage
       Token.bearerToken = loginResponse.accessToken;
+
+      Logger().d('Login successful. HasPin: ${loginResponse.hasPin}');
+
       return {
         'success': true,
         'hasPin': loginResponse.hasPin,
