@@ -243,10 +243,9 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
       final amount = double.parse(_amountController.text.replaceAll(',', ''));
 
       final result = await transferService.submitTransfer(
-        toAccount: '1000',
-
-        ///i don't what is to be here so i used a dummy value
+        toAccount: '1000', ///i don't what is to be here so i used a dummy value
         amount: amount,
+        accountNumber: _accountNumberController.text,
         pin: _newPinController.text,
         onError: (message) {
           MessageAlert.error(context: context, message: message);

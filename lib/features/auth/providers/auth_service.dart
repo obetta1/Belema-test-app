@@ -2,7 +2,7 @@ import 'package:belema_test_app/core/api/newtwork_repository.dart';
 import 'package:belema_test_app/core/api/ntwork_repository_imp.dart';
 import 'package:belema_test_app/core/utils/constants.dart';
 import 'package:belema_test_app/core/utils/token.dart';
-import 'package:belema_test_app/core/utils/token_manager.dart';
+import 'package:belema_test_app/core/utils/storage_manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 
@@ -32,7 +32,7 @@ class AuthServiceProvider {
       );
 
       final loginResponse = LoginResponse.fromJson(response);
-      await TokenManager.saveToken(loginResponse.accessToken);
+      await StorageManager.saveToken(loginResponse.accessToken);
       Token.bearerToken = loginResponse.accessToken;
       return {
         'success': true,
@@ -51,7 +51,7 @@ class AuthServiceProvider {
   /// Logout - clear stored token
   Future<void> logout() async {
     try {
-      await TokenManager.clearToken();
+      await StorageManager.clearToken();
       Token.bearerToken = null;
     } catch (e) {
       Logger().e('Logout failed: $e');

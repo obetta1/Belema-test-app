@@ -143,13 +143,13 @@ class _SetPinScreenState extends ConsumerState<SetPinScreen> {
 
       if (result.success) {
         MessageAlert.success(context: context, message: 'PIN set successfully');
-        Future.delayed(const Duration(seconds: 3), () {
+        Future.delayed(const Duration(seconds: 2), () {
           if (mounted) {
-            // Navigator.pushNamedAndRemoveUntil(
-            //   context,
-            //   AppRoutes.dashboardScreen,
-            //   (route) => false,
-            // );
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              AppRoutes.dashboardScreen,
+              (route) => false,
+            );
           }
         });
       } else {

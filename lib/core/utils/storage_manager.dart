@@ -1,7 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
 
-class TokenManager {
+class StorageManager {
   static const String _tokenKey = 'access_token';
   static const _secureStorage = FlutterSecureStorage();
 

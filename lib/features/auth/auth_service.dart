@@ -73,16 +73,11 @@ class AuthServiceProvider {
     }
   }
 
-  /// Logout - clear stored token and device binding
+  /// Logout - clear stored token
   Future<void> logout() async {
     try {
       await StorageManager.clearToken();
       Token.bearerToken = null;
-
-      // Clear device binding data
-      await DeviceBindingService.clearDeviceBinding();
-
-      Logger().d('Logout successful - token and device binding cleared');
     } catch (e) {
       Logger().e('Logout failed: $e');
     }
