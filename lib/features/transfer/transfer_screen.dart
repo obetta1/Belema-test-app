@@ -259,15 +259,13 @@ class _TransferScreenState extends ConsumerState<TransferScreen> {
           context: context,
           message: 'Transfer successful - ID: ${result.transactionId}',
         );
-        ref
+       await  ref
             .read(dashboardServiceProvider)
             .getAccountDetails(ref: ref, onError: (message) {});
         _clearForm();
-        Future.delayed(const Duration(seconds: 2), () {
           if (mounted) {
             Navigator.pop(context);
           }
-        });
       }
     } catch (e) {
       if (mounted) {
